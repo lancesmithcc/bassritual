@@ -76,7 +76,8 @@
 /* --- BODY ROW --- */
 .lcars-body-row {
     display: flex;
-    height: 400px;
+    height: 500px;
+    /* Increased from 400px for larger controls */
 }
 
 .lcars-sidebar {
@@ -132,34 +133,48 @@
 .voice-row {
     display: flex;
     align-items: center;
-    padding: 10px;
-    margin-bottom: 5px;
+    padding: 15px 10px;
+    margin-bottom: 10px;
     border-radius: 15px;
     transition: background 0.2s;
+    gap: 20px;
 }
 
 .voice-row.inactive {
-    color: var(--color-dim);
-    opacity: 0.5;
+    opacity: 0.4;
 }
 
 .voice-indicator {
-    width: 10px;
-    height: 20px;
+    width: 12px;
+    height: 30px;
     background-color: var(--color-dim);
-    margin-right: 15px;
-    border-radius: 5px;
+    margin-right: 10px;
+    border-radius: 6px;
+    flex-shrink: 0;
+    transition: all 0.3s;
 }
 
 .voice-indicator.on {
     background-color: var(--color-primary);
-    box-shadow: 0 0 10px var(--color-primary);
+    box-shadow: 0 0 15px var(--color-primary);
+}
+
+.voice-indicator:hover {
+    transform: scale(1.1);
 }
 
 .voice-id {
     font-size: 1.5rem;
     font-weight: bold;
-    width: 60px;
+    width: 50px;
+    flex-shrink: 0;
+}
+
+.voice-controls {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+    flex: 1;
 }
 
 .param {

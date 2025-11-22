@@ -1,131 +1,29 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useSession } from '../store/useSession';
 import './Dashboard.css';
 import BassEngine from '../audio/BassEngine';
 import * as Tone from 'tone';
 import { PLANETARY_TUNINGS, CONSCIOUSNESS_STATES } from '../data/presets';
+import Knob from './Knob';
+import Slider from './Slider';
 
 export default function Dashboard() {
     const { voices, toggleVoice, setVoiceParam } = useSession();
-    const [selectedRow, setSelectedRow] = useState(0);
-    const [selectedCol, setSelectedCol] = useState(0); // 0: Toggle, 1: Freq, 2: Pulse, 3: Duty
-    const [editing, setEditing] = useState<{ row: number, col: number } | null>(null);
-    const [editValue, setEditValue] = useState("");
 
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
-            if (editing) {
-                if (e.key === 'Enter') {
-                    commitEdit();
-                } else if (e.key === 'Escape') {
-                    setEditing(null);
+            if (e.key === ' ') {
+                if (BassEngine.getTransportState() === 'started') {
+                    BassEngine.stop();
+                } else {
+                    BassEngine.initialize().then(() => Tone.Transport.start());
                 }
-                return; // Trap keys when editing
-            }
-
-            switch (e.key) {
-                case 'ArrowUp':
-                    setSelectedRow(prev => (prev > 0 ? prev - 1 : voices.length - 1));
-                    break;
-                case 'ArrowDown':
-                    setSelectedRow(prev => (prev < voices.length - 1 ? prev + 1 : 0));
-                    break;
-                case 'ArrowLeft':
-                    setSelectedCol(prev => (prev > 0 ? prev - 1 : 3));
-                    break;
-                case 'ArrowRight':
-                    setSelectedCol(prev => (prev < 3 ? prev + 1 : 0));
-                    break;
-                case ' ':
-                    if (BassEngine.getTransportState() === 'started') {
-                        BassEngine.stop();
-                    } else {
-                        BassEngine.initialize().then(() => Tone.Transport.start());
-                    }
-                    break;
-                case 'Enter':
-                    if (selectedCol === 0) {
-                        toggleVoice(voices[selectedRow].id);
-                    } else {
-                        // Start Editing
-                        setEditing({ row: selectedRow, col: selectedCol });
-                        const voice = voices[selectedRow];
-                        let val = "";
-                        if (selectedCol === 1) val = voice.frequency.value.toString();
-                        if (selectedCol === 2) val = voice.pulseRate.value.toString();
-                        if (selectedCol === 3) val = (voice.dutyCycle.value * 100).toString();
-                        setEditValue(val);
-                    }
-                    break;
-                case '[':
-                    adjustParam(selectedRow, selectedCol, -1);
-                    break;
-                case ']':
-                    adjustParam(selectedRow, selectedCol, 1);
-                    break;
             }
         };
 
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [selectedRow, selectedCol, voices, toggleVoice, setVoiceParam, editing, editValue]);
-
-    const commitEdit = () => {
-        if (!editing) return;
-        const val = parseFloat(editValue);
-        if (isNaN(val)) {
-            setEditing(null);
-            return;
-        }
-
-        const voice = voices[editing.row];
-        if (editing.col === 1) {
-            setVoiceParam(voice.id, 'frequency', { ...voice.frequency, value: val });
-        } else if (editing.col === 2) {
-            setVoiceParam(voice.id, 'pulseRate', { ...voice.pulseRate, value: val });
-        } else if (editing.col === 3) {
-            setVoiceParam(voice.id, 'dutyCycle', { ...voice.dutyCycle, value: Math.max(0, Math.min(100, val)) / 100 });
-        }
-        setEditing(null);
-    };
-
-    const adjustParam = (row: number, col: number, direction: number) => {
-        const voice = voices[row];
-        const step = direction;
-
-        if (col === 1) { // Freq
-            const newVal = voice.frequency.value + step * 1.0;
-            setVoiceParam(voice.id, 'frequency', { ...voice.frequency, value: newVal });
-        } else if (col === 2) { // Pulse
-            const newVal = voice.pulseRate.value + step * 0.5;
-            setVoiceParam(voice.id, 'pulseRate', { ...voice.pulseRate, value: newVal });
-        } else if (col === 3) { // Duty
-            const newVal = Math.max(0.1, Math.min(0.9, voice.dutyCycle.value + step * 0.05));
-            setVoiceParam(voice.id, 'dutyCycle', { ...voice.dutyCycle, value: newVal });
-        }
-    };
-
-    const renderParam = (row: number, col: number, label: string, value: string) => {
-        const isSelected = selectedRow === row && selectedCol === col;
-        const isEditingThis = editing?.row === row && editing?.col === col;
-
-        return (
-            <span className={`param ${isSelected ? 'selected-col' : ''}`}>
-                {label}: {isEditingThis ? (
-                    <input
-                        autoFocus
-                        className="edit-input"
-                        value={editValue}
-                        onChange={e => setEditValue(e.target.value)}
-                        onBlur={() => setEditing(null)} // Optional: Cancel on blur
-                        onClick={e => e.stopPropagation()}
-                    />
-                ) : value}
-            </span>
-        );
-    };
-
-    // ...
+    }, []);
 
     return (
         <div className="lcars-container">
@@ -133,7 +31,7 @@ export default function Dashboard() {
                 <div className="lcars-elbow-top"></div>
                 <div className="lcars-header-bar">
                     <span className="lcars-title">
-                        BASS RITUAL // CONSOLE
+                        ACUTONICS // CONSOLE
                         <span className="lcars-symbol">
                             {PLANETARY_TUNINGS.find(p => p.id === useSession.getState().currentPlanetId)?.symbol || ""}
                         </span>
@@ -178,15 +76,54 @@ export default function Dashboard() {
 
                 <div className="lcars-content">
                     <div className="voice-panel">
-                        {voices.map((v, r) => (
-                            <div key={v.id} className={`voice-row ${v.enabled ? 'active' : 'inactive'} ${selectedRow === r ? 'selected-row' : ''}`}>
-                                <div className={`voice-indicator ${v.enabled ? 'on' : 'off'}`}></div>
-                                <span className={`voice-id ${selectedRow === r && selectedCol === 0 ? 'selected-col' : ''}`}>
+                        {voices.map((v) => (
+                            <div key={v.id} className={`voice-row ${v.enabled ? 'active' : 'inactive'}`}>
+                                <div
+                                    className={`voice-indicator ${v.enabled ? 'on' : 'off'}`}
+                                    onClick={() => toggleVoice(v.id)}
+                                    style={{ cursor: 'pointer' }}
+                                ></div>
+                                <span className="voice-id">
                                     {v.id.toUpperCase()}
                                 </span>
-                                {renderParam(r, 1, "FREQ", `${v.frequency.value.toFixed(1)}Hz`)}
-                                {renderParam(r, 2, "PULSE", `${v.pulseRate.value.toFixed(1)}Hz`)}
-                                {renderParam(r, 3, "DUTY", `${(v.dutyCycle.value * 100).toFixed(0)}%`)}
+
+                                <div className="voice-controls">
+                                    <Knob
+                                        label="FREQ"
+                                        value={v.frequency.value}
+                                        min={20}
+                                        max={400}
+                                        onChange={(val) => setVoiceParam(v.id, 'frequency', { ...v.frequency, value: val })}
+                                        unit="Hz"
+                                        decimals={1}
+                                    />
+                                    <Knob
+                                        label="PULSE"
+                                        value={v.pulseRate.value}
+                                        min={0.5}
+                                        max={50}
+                                        onChange={(val) => setVoiceParam(v.id, 'pulseRate', { ...v.pulseRate, value: val })}
+                                        unit="Hz"
+                                        decimals={1}
+                                    />
+                                    <Slider
+                                        label="DUTY"
+                                        value={v.dutyCycle.value * 100}
+                                        min={10}
+                                        max={90}
+                                        onChange={(val) => setVoiceParam(v.id, 'dutyCycle', { ...v.dutyCycle, value: val / 100 })}
+                                        unit="%"
+                                        decimals={0}
+                                    />
+                                    <Slider
+                                        label="VOL"
+                                        value={v.volume.value}
+                                        min={0}
+                                        max={1}
+                                        onChange={(val) => setVoiceParam(v.id, 'volume', { ...v.volume, value: val })}
+                                        decimals={2}
+                                    />
+                                </div>
                             </div>
                         ))}
                     </div>
@@ -207,7 +144,7 @@ export default function Dashboard() {
                     </div>
 
                     <div className="controls-hint">
-                        [ARROWS] NAVIGATE  [ [ ] / [ ] ] ADJUST  [ENTER] EDIT/TOGGLE
+                        [CLICK] INDICATOR TO TOGGLE  [DRAG] KNOBS TO ADJUST  [SPACE] PLAY/PAUSE
                     </div>
                 </div>
             </div>
