@@ -1,0 +1,34 @@
+:root {
+  --color-bg: #000000;
+  --color-primary: #39ff14;
+  /* Neon Green */
+  --color-text: #e0e0e0;
+  --color-dim: #555555;
+
+  --font-mono: 'Fira Code', monospace;
+  --font-display: 'VT323', monospace;
+  --font-main: 'Jost', sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-mono);
+  overflow: hidden;
+  /* Prevent scrollbars */
+  width: 100vw;
+  height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+#root {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
