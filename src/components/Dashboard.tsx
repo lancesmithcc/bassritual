@@ -33,7 +33,7 @@ export default function Dashboard() {
                 <div className="lcars-elbow-top"></div>
                 <div className="lcars-header-bar">
                     <span className="lcars-title">
-                        BASS RITUAL // CONSOLE
+                        BASS RITUAL
                         <span className="lcars-symbol">
                             {PLANETARY_TUNINGS.find(p => p.id === useSession.getState().currentPlanetId)?.symbol || ""}
                         </span>
@@ -52,7 +52,7 @@ export default function Dashboard() {
                                 ))}
                             </select>
                         </span>
-                        <span className="preset-selector" style={{ marginLeft: '20px' }}>
+                        <span className="preset-selector" style={{ marginLeft: '10px' }}>
                             STATE:
                             <select
                                 className="preset-dropdown"
@@ -65,7 +65,7 @@ export default function Dashboard() {
                                 ))}
                             </select>
                         </span>
-                        <span className="preset-selector" style={{ marginLeft: '20px' }}>
+                        <span className="preset-selector" style={{ marginLeft: '10px' }}>
                             <button
                                 className="fib-button"
                                 onClick={() => setShowFibMenu(!showFibMenu)}

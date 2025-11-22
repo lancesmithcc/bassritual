@@ -220,6 +220,8 @@
     display: inline-flex;
     align-items: center;
     margin-left: 10px;
+    position: relative;
+    /* For dropdown menu positioning */
 }
 
 .preset-dropdown {
