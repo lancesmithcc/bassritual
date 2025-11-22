@@ -19,9 +19,11 @@ class BassEngine {
     }
 
     public async initialize() {
+        // Always attempt to start/resume AudioContext on user gesture
+        await Tone.start();
+
         if (this.isInitialized) return;
 
-        await Tone.start();
         console.log("Tone.js Context Started");
 
         // Master Limiter to prevent clipping

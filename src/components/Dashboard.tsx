@@ -53,8 +53,8 @@ export default function Dashboard() {
                             PLANET:
                             <select
                                 className="preset-dropdown"
-                                onChange={(e) => {
-                                    BassEngine.initialize();
+                                onChange={async (e) => {
+                                    await BassEngine.initialize();
                                     loadPlanet(e.target.value);
                                 }}
                                 value={currentPlanetId || ""}
@@ -69,8 +69,8 @@ export default function Dashboard() {
                             STATE:
                             <select
                                 className="preset-dropdown"
-                                onChange={(e) => {
-                                    BassEngine.initialize();
+                                onChange={async (e) => {
+                                    await BassEngine.initialize();
                                     loadState(e.target.value);
                                 }}
                                 value={currentStateId || ""}
@@ -84,8 +84,8 @@ export default function Dashboard() {
                         <span className="preset-selector" style={{ marginLeft: '10px' }}>
                             <button
                                 className={`fib-button ${currentFibModeId ? 'active' : ''}`}
-                                onClick={() => {
-                                    BassEngine.initialize();
+                                onClick={async () => {
+                                    await BassEngine.initialize();
                                     setShowFibMenu(!showFibMenu);
                                 }}
                             >
