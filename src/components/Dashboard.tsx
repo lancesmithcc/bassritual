@@ -43,7 +43,10 @@ export default function Dashboard() {
                             PLANET:
                             <select
                                 className="preset-dropdown"
-                                onChange={(e) => useSession.getState().loadPlanet(e.target.value)}
+                                onChange={(e) => {
+                                    BassEngine.initialize();
+                                    useSession.getState().loadPlanet(e.target.value);
+                                }}
                                 value={useSession.getState().currentPlanetId || ""}
                             >
                                 <option value="" disabled>SELECT</option>
@@ -56,7 +59,10 @@ export default function Dashboard() {
                             STATE:
                             <select
                                 className="preset-dropdown"
-                                onChange={(e) => useSession.getState().loadState(e.target.value)}
+                                onChange={(e) => {
+                                    BassEngine.initialize();
+                                    useSession.getState().loadState(e.target.value);
+                                }}
                                 value={useSession.getState().currentStateId || ""}
                             >
                                 <option value="" disabled>SELECT</option>
@@ -68,7 +74,10 @@ export default function Dashboard() {
                         <span className="preset-selector" style={{ marginLeft: '10px' }}>
                             <button
                                 className={`fib-button ${useSession.getState().currentFibModeId ? 'active' : ''}`}
-                                onClick={() => setShowFibMenu(!showFibMenu)}
+                                onClick={() => {
+                                    BassEngine.initialize();
+                                    setShowFibMenu(!showFibMenu);
+                                }}
                             >
                                 ⌘ FIB {useSession.getState().currentFibModeId ? 'ON' : ''}
                             </button>
