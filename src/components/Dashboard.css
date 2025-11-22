@@ -298,6 +298,10 @@
     border-radius: 8px;
     padding: 10px;
     min-width: 250px;
+    max-height: 400px;
+    /* Limit height */
+    overflow-y: auto;
+    /* Add scroll */
     z-index: 1000;
     box-shadow: 0 0 20px rgba(var(--color-primary-rgb, 57, 255, 20), 0.5);
 }

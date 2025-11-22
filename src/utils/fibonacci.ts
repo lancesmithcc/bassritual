@@ -63,6 +63,9 @@ export function generateFibonacciSubSeries(): number[] {
     return [21, 34, 55];
 }
 
+// The Fibonacci sequence for audio/tuning
+const FIB_SEQUENCE = [1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233];
+
 export interface FibonacciMode {
     id: string;
     name: string;
@@ -70,35 +73,28 @@ export interface FibonacciMode {
     generator: (baseFreq: number) => number[];
 }
 
+// Generate modes for each number in the sequence up to 144
+const SEQUENCE_MODES: FibonacciMode[] = FIB_SEQUENCE.slice(0, 11).map((num, index) => {
+    // Get the triad: [Previous, Current, Next]
+    // For the first item (1), we use [1, 1, 2]
+    // For others, we use [Prev, Curr, Next]
+    const prev = index === 0 ? 1 : FIB_SEQUENCE[index - 1];
+    const next = FIB_SEQUENCE[index + 1];
+
+    return {
+        id: `fib_${num}`,
+        name: `Fibonacci ${num} Hz`,
+        description: `Triad: ${prev}, ${num}, ${next} Hz`,
+        generator: () => [prev, num, next]
+    };
+});
+
 export const FIBONACCI_MODES: FibonacciMode[] = [
     {
         id: 'classic',
-        name: 'Classic (1, φ, 2)',
-        description: 'Root, golden ratio, and octave',
+        name: 'Classic Harmonics',
+        description: 'Base * (1, φ, 2)',
         generator: generateFibonacciSequence
     },
-    {
-        id: 'ratios',
-        name: 'Ratios (1, 8/5, 13/5)',
-        description: 'Fibonacci number ratios',
-        generator: generateFibonacciRatioSequence
-    },
-    {
-        id: 'phi',
-        name: 'Phi Triad (1/φ, 1, φ)',
-        description: 'Golden ratio symmetry',
-        generator: generatePhiHarmonics
-    },
-    {
-        id: 'series_bass',
-        name: 'Series (55-144Hz)',
-        description: 'Fixed tones: 55, 89, 144',
-        generator: generateFibonacciBassSeries
-    },
-    {
-        id: 'series_sub',
-        name: 'Sub Series (21-55Hz)',
-        description: 'Fixed tones: 21, 34, 55',
-        generator: generateFibonacciSubSeries
-    }
+    ...SEQUENCE_MODES
 ];
