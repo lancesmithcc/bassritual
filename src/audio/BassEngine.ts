@@ -20,7 +20,10 @@ class BassEngine {
 
     public async initialize() {
         // Always attempt to start/resume AudioContext on user gesture
-        await Tone.start();
+        if (Tone.context.state !== 'running') {
+            await Tone.start();
+            await Tone.context.resume();
+        }
 
         if (this.isInitialized) return;
 
