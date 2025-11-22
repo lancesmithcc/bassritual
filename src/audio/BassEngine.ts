@@ -74,7 +74,7 @@ class BassEngine {
         Object.entries(scene.patterns).forEach(([voiceId, steps]) => {
             let time = 0;
             (steps as any[]).forEach(step => {
-                Tone.Transport.schedule((t) => {
+                Tone.Transport.schedule(() => {
                     // Merge params with voice id
                     // Note: This is a simplified update. Real update might need more logic.
                     this.updateVoice({ id: voiceId, ...step.params });

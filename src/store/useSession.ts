@@ -7,13 +7,15 @@ interface SessionState {
     voices: VoiceConfig[];
     masterVolume: number;
     scene: Scene | null;
-    currentPresetId: string | null;
+    currentPlanetId: string | null;
+    currentStateId: string | null;
 
     // Actions
     setVoiceParam: (voiceId: string, param: keyof VoiceConfig, value: any) => void;
     toggleVoice: (voiceId: string) => void;
     setMasterVolume: (vol: number) => void;
-    loadPreset: (presetId: string) => void;
+    loadPlanet: (planetId: string) => void;
+    loadState: (stateId: string) => void;
 }
 
 const initialVoices: VoiceConfig[] = [
@@ -37,7 +39,7 @@ const initialVoices: VoiceConfig[] = [
     }
 ];
 
-export const useSession = create<SessionState>((set, get) => ({
+export const useSession = create<SessionState>((set) => ({
     voices: initialVoices,
     masterVolume: -6,
     scene: null,
@@ -75,7 +77,7 @@ export const useSession = create<SessionState>((set, get) => ({
 
     setMasterVolume: (vol) => set({ masterVolume: vol }),
 
-    loadPlanet: (planetId) => {
+    loadPlanet: (planetId: string) => {
         const planet = PLANETARY_TUNINGS.find(p => p.id === planetId);
         if (!planet) return;
 
@@ -111,7 +113,7 @@ export const useSession = create<SessionState>((set, get) => ({
         });
     },
 
-    loadState: (stateId) => {
+    loadState: (stateId: string) => {
         const cState = CONSCIOUSNESS_STATES.find(s => s.id === stateId);
         if (!cState) return;
 

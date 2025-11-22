@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { useSession } from '../store/useSession';
 import './Dashboard.css';
 import BassEngine from '../audio/BassEngine';
-import type { VoiceConfig } from '../types/types';
 import * as Tone from 'tone';
 import { PLANETARY_TUNINGS, CONSCIOUSNESS_STATES } from '../data/presets';
 
