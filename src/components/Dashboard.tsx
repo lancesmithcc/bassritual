@@ -67,10 +67,10 @@ export default function Dashboard() {
                         </span>
                         <span className="preset-selector" style={{ marginLeft: '10px' }}>
                             <button
-                                className="fib-button"
+                                className={`fib-button ${useSession.getState().currentFibModeId ? 'active' : ''}`}
                                 onClick={() => setShowFibMenu(!showFibMenu)}
                             >
-                                ⌘ FIB
+                                ⌘ FIB {useSession.getState().currentFibModeId ? 'ON' : ''}
                             </button>
                             {showFibMenu && (
                                 <div className="fib-menu">

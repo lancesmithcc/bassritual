@@ -263,6 +263,27 @@
     box-shadow: 0 0 10px var(--color-primary);
 }
 
+.fib-button.active {
+    background: white;
+    color: black;
+    box-shadow: 0 0 20px white, 0 0 40px var(--color-primary);
+    animation: pulse-glow 2s infinite;
+}
+
+@keyframes pulse-glow {
+    0% {
+        box-shadow: 0 0 20px white;
+    }
+
+    50% {
+        box-shadow: 0 0 30px white, 0 0 50px var(--color-primary);
+    }
+
+    100% {
+        box-shadow: 0 0 20px white;
+    }
+}
+
 .fib-button:hover {
     transform: scale(1.05);
     box-shadow: 0 0 15px var(--color-primary);

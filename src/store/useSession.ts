@@ -10,6 +10,7 @@ interface SessionState {
     scene: Scene | null;
     currentPlanetId: string | null;
     currentStateId: string | null;
+    currentFibModeId: string | null;
 
     // Actions
     setVoiceParam: (voiceId: string, param: keyof VoiceConfig, value: any) => void;
@@ -47,6 +48,7 @@ export const useSession = create<SessionState>((set) => ({
     scene: null,
     currentPlanetId: null,
     currentStateId: null,
+    currentFibModeId: null,
 
     setVoiceParam: (voiceId, param, value) => {
         set(state => {
@@ -136,6 +138,7 @@ export const useSession = create<SessionState>((set) => ({
     },
 
     applyFibonacci: (modeId: string) => {
+        console.log(`Applying Fibonacci Mode: ${modeId}`);
         const mode = FIBONACCI_MODES.find(m => m.id === modeId);
         if (!mode) return;
 
@@ -145,7 +148,10 @@ export const useSession = create<SessionState>((set) => ({
             if (!baseVoice) return state;
 
             const baseFreq = baseVoice.frequency.value;
+            console.log(`Base Frequency: ${baseFreq}Hz`);
+
             const fibFreqs = mode.generator(baseFreq);
+            console.log(`Generated Frequencies:`, fibFreqs);
 
             const newVoices = state.voices.map((v, i) => {
                 if (i >= fibFreqs.length) return v;
@@ -160,16 +166,17 @@ export const useSession = create<SessionState>((set) => ({
                 newVoice.enabled = true;
 
                 // Ensure volume is audible if it was off
-                if (newVoice.volume.value === 0) {
+                if (newVoice.volume.value < 0.1) {
                     newVoice.volume = { ...newVoice.volume, value: 0.8, rampTime: 2 };
                 }
 
+                console.log(`Updating Voice ${newVoice.id}: ${newVoice.frequency.value}Hz`);
                 BassEngine.updateVoice(newVoice);
 
                 return newVoice;
             });
 
-            return { voices: newVoices };
+            return { voices: newVoices, currentFibModeId: modeId };
         });
     }
 }));
