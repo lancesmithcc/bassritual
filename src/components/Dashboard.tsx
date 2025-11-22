@@ -1,14 +1,16 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useSession } from '../store/useSession';
 import './Dashboard.css';
 import BassEngine from '../audio/BassEngine';
 import * as Tone from 'tone';
 import { PLANETARY_TUNINGS, CONSCIOUSNESS_STATES } from '../data/presets';
+import { FIBONACCI_MODES } from '../utils/fibonacci';
 import Knob from './Knob';
 import Slider from './Slider';
 
 export default function Dashboard() {
     const { voices, toggleVoice, setVoiceParam } = useSession();
+    const [showFibMenu, setShowFibMenu] = useState(false);
 
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
@@ -31,7 +33,7 @@ export default function Dashboard() {
                 <div className="lcars-elbow-top"></div>
                 <div className="lcars-header-bar">
                     <span className="lcars-title">
-                        ACUTONICS // CONSOLE
+                        BASS RITUAL // CONSOLE
                         <span className="lcars-symbol">
                             {PLANETARY_TUNINGS.find(p => p.id === useSession.getState().currentPlanetId)?.symbol || ""}
                         </span>
@@ -62,6 +64,31 @@ export default function Dashboard() {
                                     <option key={s.id} value={s.id}>{s.name}</option>
                                 ))}
                             </select>
+                        </span>
+                        <span className="preset-selector" style={{ marginLeft: '20px' }}>
+                            <button
+                                className="fib-button"
+                                onClick={() => setShowFibMenu(!showFibMenu)}
+                            >
+                                ⌘ FIB
+                            </button>
+                            {showFibMenu && (
+                                <div className="fib-menu">
+                                    {FIBONACCI_MODES.map(mode => (
+                                        <div
+                                            key={mode.id}
+                                            className="fib-option"
+                                            onClick={() => {
+                                                useSession.getState().applyFibonacci(mode.id);
+                                                setShowFibMenu(false);
+                                            }}
+                                        >
+                                            <div className="fib-name">{mode.name}</div>
+                                            <div className="fib-desc">{mode.description}</div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
                         </span>
                     </div>
                 </div>

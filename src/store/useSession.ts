@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import type { VoiceConfig, Scene } from '../types/types';
 import BassEngine from '../audio/BassEngine';
 import { PLANETARY_TUNINGS, CONSCIOUSNESS_STATES } from '../data/presets';
+import { FIBONACCI_MODES } from '../utils/fibonacci';
 
 interface SessionState {
     voices: VoiceConfig[];
@@ -16,6 +17,7 @@ interface SessionState {
     setMasterVolume: (vol: number) => void;
     loadPlanet: (planetId: string) => void;
     loadState: (stateId: string) => void;
+    applyFibonacci: (mode: string) => void;
 }
 
 const initialVoices: VoiceConfig[] = [
@@ -136,6 +138,36 @@ export const useSession = create<SessionState>((set) => ({
                 return newVoice;
             });
             return { voices: newVoices, currentStateId: stateId };
+        });
+    },
+
+    applyFibonacci: (modeId: string) => {
+        const mode = FIBONACCI_MODES.find(m => m.id === modeId);
+        if (!mode) return;
+
+        set(state => {
+            // Get the first enabled voice's frequency as the base
+            const baseVoice = state.voices.find(v => v.enabled);
+            if (!baseVoice) return state;
+
+            const baseFreq = baseVoice.frequency.value;
+            const fibFreqs = mode.generator(baseFreq);
+
+            const newVoices = state.voices.map((v, i) => {
+                if (i >= fibFreqs.length) return v;
+
+                const newVoice = { ...v };
+                newVoice.frequency = {
+                    value: fibFreqs[i],
+                    rampTime: 3
+                };
+                newVoice.enabled = true; // Enable all voices for Fibonacci
+
+                BassEngine.updateVoice(newVoice);
+                return newVoice;
+            });
+
+            return { voices: newVoices };
         });
     }
 }));
