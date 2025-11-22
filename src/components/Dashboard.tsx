@@ -9,7 +9,17 @@ import Knob from './Knob';
 import Slider from './Slider';
 
 export default function Dashboard() {
-    const { voices, toggleVoice, setVoiceParam } = useSession();
+    const {
+        voices,
+        toggleVoice,
+        setVoiceParam,
+        currentPlanetId,
+        currentStateId,
+        currentFibModeId,
+        loadPlanet,
+        loadState,
+        applyFibonacci
+    } = useSession();
     const [showFibMenu, setShowFibMenu] = useState(false);
 
     useEffect(() => {
@@ -35,7 +45,7 @@ export default function Dashboard() {
                     <span className="lcars-title">
                         ACUTONICS //
                         <span className="lcars-symbol">
-                            {PLANETARY_TUNINGS.find(p => p.id === useSession.getState().currentPlanetId)?.symbol || ""}
+                            {PLANETARY_TUNINGS.find(p => p.id === currentPlanetId)?.symbol || ""}
                         </span>
                     </span>
                     <div className="status-bar">
@@ -45,9 +55,9 @@ export default function Dashboard() {
                                 className="preset-dropdown"
                                 onChange={(e) => {
                                     BassEngine.initialize();
-                                    useSession.getState().loadPlanet(e.target.value);
+                                    loadPlanet(e.target.value);
                                 }}
-                                value={useSession.getState().currentPlanetId || ""}
+                                value={currentPlanetId || ""}
                             >
                                 <option value="" disabled>SELECT</option>
                                 {PLANETARY_TUNINGS.map(p => (
@@ -61,9 +71,9 @@ export default function Dashboard() {
                                 className="preset-dropdown"
                                 onChange={(e) => {
                                     BassEngine.initialize();
-                                    useSession.getState().loadState(e.target.value);
+                                    loadState(e.target.value);
                                 }}
-                                value={useSession.getState().currentStateId || ""}
+                                value={currentStateId || ""}
                             >
                                 <option value="" disabled>SELECT</option>
                                 {CONSCIOUSNESS_STATES.map(s => (
@@ -73,13 +83,13 @@ export default function Dashboard() {
                         </span>
                         <span className="preset-selector" style={{ marginLeft: '10px' }}>
                             <button
-                                className={`fib-button ${useSession.getState().currentFibModeId ? 'active' : ''}`}
+                                className={`fib-button ${currentFibModeId ? 'active' : ''}`}
                                 onClick={() => {
                                     BassEngine.initialize();
                                     setShowFibMenu(!showFibMenu);
                                 }}
                             >
-                                ⌘ FIB {useSession.getState().currentFibModeId ? 'ON' : ''}
+                                ⌘ FIB {currentFibModeId ? 'ON' : ''}
                             </button>
                             {showFibMenu && (
                                 <div className="fib-menu">
@@ -88,7 +98,7 @@ export default function Dashboard() {
                                             key={mode.id}
                                             className="fib-option"
                                             onClick={() => {
-                                                useSession.getState().applyFibonacci(mode.id);
+                                                applyFibonacci(mode.id);
                                                 setShowFibMenu(false);
                                             }}
                                         >
@@ -166,8 +176,8 @@ export default function Dashboard() {
 
                     <div className="context-desc">
                         {(() => {
-                            const planet = PLANETARY_TUNINGS.find(p => p.id === useSession.getState().currentPlanetId);
-                            const state = CONSCIOUSNESS_STATES.find(s => s.id === useSession.getState().currentStateId);
+                            const planet = PLANETARY_TUNINGS.find(p => p.id === currentPlanetId);
+                            const state = CONSCIOUSNESS_STATES.find(s => s.id === currentStateId);
                             if (planet && state) {
                                 return `${planet.description} ${state.description}`;
                             } else if (planet) {
