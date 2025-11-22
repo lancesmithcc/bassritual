@@ -123,12 +123,6 @@ export const useSession = create<SessionState>((set) => ({
             const newVoices = state.voices.map(v => {
                 const newVoice = { ...v };
                 // Update Pulse Rate for all voices to match the state
-                // We might want slight variations per voice for phasing?
-                // For now, sync them all to the state rate.
-
-                // Optional: Add slight detune to pulse rate for richness?
-                // Let's keep it simple first.
-
                 newVoice.pulseRate = {
                     value: cState.rate,
                     rampTime: 4 // Slow transition for state change
@@ -146,8 +140,8 @@ export const useSession = create<SessionState>((set) => ({
         if (!mode) return;
 
         set(state => {
-            // Get the first enabled voice's frequency as the base
-            const baseVoice = state.voices.find(v => v.enabled);
+            // Get the first enabled voice's frequency as the base, or just the first voice
+            const baseVoice = state.voices.find(v => v.enabled) || state.voices[0];
             if (!baseVoice) return state;
 
             const baseFreq = baseVoice.frequency.value;
@@ -161,9 +155,17 @@ export const useSession = create<SessionState>((set) => ({
                     value: fibFreqs[i],
                     rampTime: 3
                 };
-                newVoice.enabled = true; // Enable all voices for Fibonacci
+
+                // Enable all voices for Fibonacci
+                newVoice.enabled = true;
+
+                // Ensure volume is audible if it was off
+                if (newVoice.volume.value === 0) {
+                    newVoice.volume = { ...newVoice.volume, value: 0.8, rampTime: 2 };
+                }
 
                 BassEngine.updateVoice(newVoice);
+
                 return newVoice;
             });
 

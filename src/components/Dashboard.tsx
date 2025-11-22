@@ -33,7 +33,7 @@ export default function Dashboard() {
                 <div className="lcars-elbow-top"></div>
                 <div className="lcars-header-bar">
                     <span className="lcars-title">
-                        BASS RITUAL
+                        ACUTONICS //
                         <span className="lcars-symbol">
                             {PLANETARY_TUNINGS.find(p => p.id === useSession.getState().currentPlanetId)?.symbol || ""}
                         </span>
