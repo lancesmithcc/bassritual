@@ -83,17 +83,21 @@ const SEQUENCE_MODES: FibonacciMode[] = FIB_SEQUENCE.slice(0, 11).map((num, inde
 
     return {
         id: `fib_${num}`,
-        name: `Fibonacci ${num} Hz`,
-        description: `Triad: ${prev}, ${num}, ${next} Hz`,
-        generator: () => [prev, num, next]
+        name: `Harmonic ${num}x`,
+        description: `Partials: ${prev}x, ${num}x, ${next}x`,
+        generator: (baseFreq: number) => [
+            baseFreq * prev,
+            baseFreq * num,
+            baseFreq * next
+        ]
     };
 });
 
 export const FIBONACCI_MODES: FibonacciMode[] = [
     {
         id: 'classic',
-        name: 'Classic Harmonics',
-        description: 'Base * (1, φ, 2)',
+        name: 'Classic (1, φ, 2)',
+        description: 'Root, golden ratio, and octave',
         generator: generateFibonacciSequence
     },
     ...SEQUENCE_MODES
