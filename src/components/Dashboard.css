@@ -46,8 +46,7 @@
     font-weight: bold;
     white-space: nowrap;
     /* Prevent wrapping */
-    overflow: hidden;
-    /* Clip if necessary */
+    /* overflow: hidden;  REMOVED to allow dropdown menu to be visible */
 }
 
 .lcars-title {

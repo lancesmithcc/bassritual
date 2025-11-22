@@ -85,6 +85,7 @@ export default function Dashboard() {
                             <button
                                 className={`fib-button ${currentFibModeId ? 'active' : ''}`}
                                 onClick={() => {
+                                    console.log("Fibonacci button clicked");
                                     // Fire and forget audio init so UI doesn't hang
                                     BassEngine.initialize().catch(console.error);
                                     setShowFibMenu(!showFibMenu);
