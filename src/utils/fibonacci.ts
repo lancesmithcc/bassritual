@@ -51,6 +51,18 @@ export function generatePhiHarmonics(baseFreq: number): number[] {
     ];
 }
 
+export function generateFibonacciBassSeries(): number[] {
+    // Uses specific audible frequencies from the Fibonacci sequence
+    // 21, 34, 55, 89, 144 are the bass range numbers
+    // We'll use the upper triad: 55, 89, 144
+    return [55, 89, 144];
+}
+
+export function generateFibonacciSubSeries(): number[] {
+    // Uses the lower bass triad: 21, 34, 55
+    return [21, 34, 55];
+}
+
 export interface FibonacciMode {
     id: string;
     name: string;
@@ -76,5 +88,17 @@ export const FIBONACCI_MODES: FibonacciMode[] = [
         name: 'Phi Triad (1/φ, 1, φ)',
         description: 'Golden ratio symmetry',
         generator: generatePhiHarmonics
+    },
+    {
+        id: 'series_bass',
+        name: 'Series (55-144Hz)',
+        description: 'Fixed tones: 55, 89, 144',
+        generator: generateFibonacciBassSeries
+    },
+    {
+        id: 'series_sub',
+        name: 'Sub Series (21-55Hz)',
+        description: 'Fixed tones: 21, 34, 55',
+        generator: generateFibonacciSubSeries
     }
 ];
