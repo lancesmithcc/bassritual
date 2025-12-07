@@ -3,6 +3,18 @@ import type { VoiceConfig, Scene } from '../types/types';
 import BassEngine from '../audio/BassEngine';
 import { PLANETARY_TUNINGS, CONSCIOUSNESS_STATES } from '../data/presets';
 import { FIBONACCI_MODES } from '../utils/fibonacci';
+import { BASE_VOICES } from '../data/baseVoices';
+
+const cloneVoice = (v: VoiceConfig): VoiceConfig => ({
+    ...v,
+    frequency: { ...v.frequency },
+    pulseRate: { ...v.pulseRate },
+    dutyCycle: { ...v.dutyCycle },
+    pulseShape: { ...v.pulseShape },
+    volume: { ...v.volume },
+    pan: { ...v.pan },
+    filterCutoff: { ...v.filterCutoff }
+});
 
 interface SessionState {
     voices: VoiceConfig[];
@@ -21,29 +33,8 @@ interface SessionState {
     applyFibonacci: (mode: string) => void;
 }
 
-const initialVoices: VoiceConfig[] = [
-    {
-        id: 'v1', enabled: true,
-        frequency: { value: 40, rampTime: 2 }, waveform: 'sine',
-        pulseRate: { value: 6, rampTime: 2 }, dutyCycle: { value: 0.5 }, pulseShape: { value: 0 },
-        volume: { value: 1, rampTime: 0.5 }, pan: { value: 0 }, filterCutoff: { value: 2000 }
-    },
-    {
-        id: 'v2', enabled: true,
-        frequency: { value: 72, rampTime: 2 }, waveform: 'sine',
-        pulseRate: { value: 8, rampTime: 2 }, dutyCycle: { value: 0.3 }, pulseShape: { value: 0 },
-        volume: { value: 0.8, rampTime: 0.5 }, pan: { value: -0.2 }, filterCutoff: { value: 2000 }
-    },
-    {
-        id: 'v3', enabled: false,
-        frequency: { value: 110, rampTime: 2 }, waveform: 'sine',
-        pulseRate: { value: 4, rampTime: 2 }, dutyCycle: { value: 0.5 }, pulseShape: { value: 0 },
-        volume: { value: 0.6, rampTime: 0.5 }, pan: { value: 0.2 }, filterCutoff: { value: 1000 }
-    }
-];
-
 export const useSession = create<SessionState>((set) => ({
-    voices: initialVoices,
+    voices: BASE_VOICES.map(cloneVoice),
     masterVolume: -6,
     scene: null,
     currentPlanetId: null,

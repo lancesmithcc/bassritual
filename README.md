@@ -1,73 +1,53 @@
-# React + TypeScript + Vite
+# Bass Ritual Acutonics
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+React + Tone.js interface for generating acutonics-style isochronic tones. The site now ships with a lightweight HTTP API so other tools can request tone recipes built from the same presets as the UI.
 
-Currently, two official plugins are available:
+## API
+- Start the server: `npm run api` (default port `8788`, override with `PORT=xxxx`).
+- `GET /health` – readiness check.
+- `GET /api/meta` – lists planetary tunings, consciousness states, and Fibonacci modes (safe to cache).
+- `POST /api/tones` – generate a tone recipe.
+  - `planetId` (optional): one of `PLANETARY_TUNINGS`.
+  - `stateId` (optional): sets a global isochronic pulse rate.
+  - `fibModeId` (optional): choose a Fibonacci harmonic set.
+  - `baseFrequency` (optional): seed for Fibonacci modes (falls back to the first enabled voice).
+  - `pulseRate` (optional): force a single pulse/LFO rate across all voices.
+  - `voices` (optional): array of partial voice overrides `{ id, frequency, pulseRate, dutyCycle, pulseShape, volume, pan, filterCutoff, waveform, enabled }`.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Example request:
 
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+curl -X POST http://localhost:8788/api/tones \
+  -H "Content-Type: application/json" \
+  -d '{
+    "planetId": "ohm",
+    "stateId": "theta",
+    "fibModeId": "classic",
+    "pulseRate": 6,
+    "voices": [{ "id": "v1", "waveform": "triangle" }]
+  }'
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Example response shape:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
+```json
+{
+  "voices": [
+    { "id": "v1", "enabled": true, "frequency": { "value": 136.1, "rampTime": 3 }, "waveform": "triangle", "pulseRate": { "value": 6, "rampTime": 2 }, "dutyCycle": { "value": 0.5 }, "pulseShape": { "value": 0 }, "volume": { "value": 0.9, "rampTime": 2 }, "pan": { "value": 0 }, "filterCutoff": { "value": 2000 } },
+    { "id": "v2", "enabled": true, "frequency": { "value": 218.865, "rampTime": 3 }, "waveform": "sine", "pulseRate": { "value": 6, "rampTime": 2 }, "dutyCycle": { "value": 0.4 }, "pulseShape": { "value": 0 }, "volume": { "value": 0.7, "rampTime": 2 }, "pan": { "value": -0.2 }, "filterCutoff": { "value": 2000 } },
+    { "id": "v3", "enabled": true, "frequency": { "value": 272.2, "rampTime": 3 }, "waveform": "sine", "pulseRate": { "value": 6, "rampTime": 2 }, "dutyCycle": { "value": 0.6 }, "pulseShape": { "value": 0 }, "volume": { "value": 0.8, "rampTime": 2 }, "pan": { "value": 0.2 }, "filterCutoff": { "value": 1000 } }
+  ],
+  "context": {
+    "planet": { "id": "ohm", "name": "OHM (Earth)", "...": "..." },
+    "state": { "id": "theta", "name": "THETA (6.0Hz)", "...": "..." },
+    "fibonacciMode": { "id": "classic", "name": "Classic (1, phi, 2)", "description": "Root, golden ratio, and octave" }
   },
-])
+  "summary": { "baseFrequencyHz": 136.1, "isochronicRateHz": 6, "voiceCount": 3 },
+  "notes": []
+}
 ```
+
+## Frontend
+- Run the UI in dev mode: `npm run dev`
+- Build: `npm run build`
+- Preview: `npm run preview`

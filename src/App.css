@@ -53,3 +53,30 @@
 .ui-layer * {
   pointer-events: auto;
 }
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .ui-layer {
+    padding: 1rem;
+  }
+
+  .start-btn {
+    font-size: 1.2rem;
+    padding: 1.2rem 2rem;
+    min-width: 200px;
+    min-height: 60px; /* Touch-friendly size */
+  }
+}
+
+@media (max-width: 480px) {
+  .ui-layer {
+    padding: 0.5rem;
+  }
+
+  .start-btn {
+    font-size: 1rem;
+    padding: 1rem 1.5rem;
+    width: 80%;
+    max-width: 280px;
+  }
+}
