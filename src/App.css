@@ -46,6 +46,10 @@
   height: 100%;
   z-index: 1;
   padding: 2rem;
+  padding-top: calc(2rem + var(--safe-area-top));
+  padding-bottom: calc(2rem + var(--safe-area-bottom));
+  padding-left: calc(2rem + var(--safe-area-left));
+  padding-right: calc(2rem + var(--safe-area-right));
   pointer-events: none;
   /* Let clicks pass through to canvas if needed */
 }
@@ -58,6 +62,10 @@
 @media (max-width: 768px) {
   .ui-layer {
     padding: 1rem;
+    padding-top: calc(1rem + var(--safe-area-top));
+    padding-bottom: calc(1rem + var(--safe-area-bottom));
+    padding-left: calc(1rem + var(--safe-area-left));
+    padding-right: calc(1rem + var(--safe-area-right));
   }
 
   .start-btn {
@@ -71,6 +79,10 @@
 @media (max-width: 480px) {
   .ui-layer {
     padding: 0.5rem;
+    padding-top: calc(0.5rem + var(--safe-area-top));
+    padding-bottom: calc(0.5rem + var(--safe-area-bottom));
+    padding-left: calc(0.5rem + var(--safe-area-left));
+    padding-right: calc(0.5rem + var(--safe-area-right));
   }
 
   .start-btn {
@@ -78,5 +90,14 @@
     padding: 1rem 1.5rem;
     width: 80%;
     max-width: 280px;
+  }
+}
+
+/* Landscape mobile orientation */
+@media (max-height: 500px) and (orientation: landscape) {
+  .ui-layer {
+    padding: 0.5rem;
+    padding-left: calc(0.5rem + var(--safe-area-left));
+    padding-right: calc(0.5rem + var(--safe-area-right));
   }
 }

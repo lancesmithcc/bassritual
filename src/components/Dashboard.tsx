@@ -21,15 +21,33 @@ export default function Dashboard() {
         applyFibonacci
     } = useSession();
     const [showFibMenu, setShowFibMenu] = useState(false);
+    const [isPlaying, setIsPlaying] = useState(false);
+
+    // Sync playing state with transport
+    useEffect(() => {
+        const checkState = () => {
+            setIsPlaying(BassEngine.getTransportState() === 'started');
+        };
+        const interval = setInterval(checkState, 200);
+        return () => clearInterval(interval);
+    }, []);
+
+    const togglePlayPause = async () => {
+        if (BassEngine.getTransportState() === 'started') {
+            BassEngine.stop();
+            setIsPlaying(false);
+        } else {
+            await BassEngine.initialize();
+            Tone.Transport.start();
+            setIsPlaying(true);
+        }
+    };
 
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
             if (e.key === ' ') {
-                if (BassEngine.getTransportState() === 'started') {
-                    BassEngine.stop();
-                } else {
-                    BassEngine.initialize().then(() => Tone.Transport.start());
-                }
+                e.preventDefault();
+                togglePlayPause();
             }
         };
 
@@ -85,7 +103,6 @@ export default function Dashboard() {
                             <button
                                 className={`fib-button ${currentFibModeId ? 'active' : ''}`}
                                 onClick={() => {
-                                    console.log("Fibonacci button clicked");
                                     // Fire and forget audio init so UI doesn't hang
                                     BassEngine.initialize().catch(console.error);
                                     setShowFibMenu(!showFibMenu);
@@ -94,21 +111,27 @@ export default function Dashboard() {
                                 ⌘ FIB {currentFibModeId ? 'ON' : ''}
                             </button>
                             {showFibMenu && (
-                                <div className="fib-menu">
-                                    {FIBONACCI_MODES.map(mode => (
-                                        <div
-                                            key={mode.id}
-                                            className="fib-option"
-                                            onClick={() => {
-                                                applyFibonacci(mode.id);
-                                                setShowFibMenu(false);
-                                            }}
-                                        >
-                                            <div className="fib-name">{mode.name}</div>
-                                            <div className="fib-desc">{mode.description}</div>
-                                        </div>
-                                    ))}
-                                </div>
+                                <>
+                                    <div
+                                        className="fib-backdrop"
+                                        onClick={() => setShowFibMenu(false)}
+                                    />
+                                    <div className="fib-menu">
+                                        {FIBONACCI_MODES.map(mode => (
+                                            <div
+                                                key={mode.id}
+                                                className="fib-option"
+                                                onClick={() => {
+                                                    applyFibonacci(mode.id);
+                                                    setShowFibMenu(false);
+                                                }}
+                                            >
+                                                <div className="fib-name">{mode.name}</div>
+                                                <div className="fib-desc">{mode.description}</div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </>
                             )}
                         </span>
                     </div>
@@ -196,6 +219,15 @@ export default function Dashboard() {
                     </div>
                 </div>
             </div>
+
+            {/* Mobile play/pause button */}
+            <button
+                className={`mobile-play-btn ${isPlaying ? 'playing' : ''}`}
+                onClick={togglePlayPause}
+                aria-label={isPlaying ? 'Pause' : 'Play'}
+            >
+                {isPlaying ? '⏸' : '▶'}
+            </button>
         </div>
     );
 }

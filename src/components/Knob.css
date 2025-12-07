@@ -85,18 +85,18 @@
 /* Mobile touch optimizations */
 @media (max-width: 768px) {
     .knob {
-        width: 60px;
-        height: 60px;
+        width: 64px;
+        height: 64px;
     }
 
     .knob-indicator {
-        transform-origin: center 20px;
-        height: 20px;
+        transform-origin: center 22px;
+        height: 22px;
     }
 
     .knob-center {
-        width: 14px;
-        height: 14px;
+        width: 16px;
+        height: 16px;
     }
 
     .knob-container {
@@ -105,22 +105,33 @@
 }
 
 @media (max-width: 480px) {
+    .knob-container {
+        gap: 4px;
+        max-width: 80px;
+    }
+
     .knob {
-        width: 55px;
-        height: 55px;
+        width: 56px;
+        height: 56px;
     }
 
     .knob-label {
-        font-size: 0.65rem;
+        font-size: 0.6rem;
     }
 
     .knob-value {
-        font-size: 0.75rem;
-        min-width: 50px;
+        font-size: 0.7rem;
+        min-width: auto;
     }
 
     .knob-indicator {
         transform-origin: center 18px;
         height: 18px;
+        top: 4px;
+    }
+
+    .knob-center {
+        width: 12px;
+        height: 12px;
     }
 }
